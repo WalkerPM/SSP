@@ -1,0 +1,10 @@
+- name: API Server example.com # Checks availability of https://example.com:443/api endpoint
+  address: example.com
+  port: 443
+  protocol: https
+  route: /api
+
+- name: Google.com # Checks availability of http://google.com/ endpoint
+  address: google.com
+  port: 80
+  protocol: http
