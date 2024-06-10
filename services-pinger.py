@@ -1,3 +1,4 @@
+#!/bin/python3
 import yaml
 import telebot
 import requests
