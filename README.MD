@@ -43,8 +43,8 @@ pip3 install -r requirements.txt
 python3 service-pinger.py
 ```
 
-Or you can use Docker for run SSR!
+Or you can use Docker for run SSP!
 ```
-docker build -t ssr:latest
-docker run --name ssr-instance-1 -d ssr:latest
+docker build -t ssp:latest
+docker run --name ssp-instance-1 -d ssp:latest
 ```
