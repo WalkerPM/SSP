@@ -36,8 +36,15 @@ Fill `service-list.yaml` like in sample:
   protocol: http
 ```
 
-Run your application!
+Start application:
 
 ```
+pip3 install -r requirements.txt
 python3 service-pinger.py
+```
+
+Or you can use Docker for run SSR!
+```
+docker build -t ssr:latest
+docker run --name ssr-instance-1 -d ssr:latest
 ```
