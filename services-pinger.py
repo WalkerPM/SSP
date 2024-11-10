@@ -1,16 +1,17 @@
 #!/bin/python3
 import yaml
-import telebot
 import requests
 import logging
-import time
+from time import sleep
+from os import environ
 from telegram_text import PlainText
 from dotenv import load_dotenv
 
-CHAT_ID =""
-BOT_TOKEN = ""
+load_dotenv()
 
-from dotenv import load_dotenv
+CHAT_ID = environ.get("CHAT_ID")
+BOT_TOKEN = environ.get("BOT_TOKEN")
+
 CONFIG_FILENAME = "service-list.yaml"
 
 logging.basicConfig(
@@ -132,6 +133,7 @@ if __name__ == "__main__":
         all = len(services)
         available = 0
         unavailable = 0
+
         for i in services:
             
             if i.status == 1:
@@ -145,4 +147,4 @@ if __name__ == "__main__":
 
         logging.info(f'Total hosts: {all}. Available : {available}. Unavailable: {unavailable}.')
 
-        time.sleep(120)
+        sleep(120)
