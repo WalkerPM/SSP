@@ -5,6 +5,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY services-pinger.py ./services-pinger.py
 
 CMD [ "python", "./services-pinger.py" ]
