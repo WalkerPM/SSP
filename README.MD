@@ -45,6 +45,5 @@ python3 service-pinger.py
 
 Or you can use Docker for run SSP!
 ```
-docker build -t ssp:latest
-docker run --name ssp-instance-1 -d ssp:latest
+docker-compose up -d --build
 ```
