@@ -84,10 +84,11 @@ def send_msg(current_service: Service,
         sended_request = requests.post(url=send_url, data=send_data)
         sended_request.raise_for_status()
     except Exception as e:
-        logging.warn("Ошибка в отправке.")
-        logging.warn(sended_request.text)
+        logging.warning("Exception in sending process.")
+        logging.exception(e)
     finally:
-        logging.info(f"Статус отправленного сообщения: {sended_request.status_code}")
+        if isinstance(sended_request, requests.Response):
+            logging.info(f"Status of message: {sended_request.status_code}")
         logging.info(send_msg)
     pass
 
