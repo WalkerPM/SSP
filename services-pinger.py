@@ -18,6 +18,9 @@ logging.basicConfig(
     level=logging.INFO, format="[%(asctime)s: %(levelname)s] %(message)s"
 )
 
+
+
+
 class Service:
     def __init__(self, name, address, protocol, port: str = "0000", route: str = "/") -> None:
         self.name: str = name
@@ -27,6 +30,7 @@ class Service:
         self.route: str = route
         self.status: bool = True
         self.notified: bool = False
+        self.retries: int = 2
         pass
 
     def change_status(self):
@@ -36,14 +40,23 @@ class Service:
             self.status = True
 
     def check_http(self, secure: bool = False):
-        try:
-            if secure:
-                check_request = requests.get(f'https://{self.address}:{self.port}{self.route}', timeout=10)
-            else:
-                check_request = requests.get(f'http://{self.address}:{self.port}{self.route}', timeout=10)
-        except Exception as e:
-            logging.error(e)
+        failed_tries = 0
+
+        for i in range(self.retries):
+            try:
+                if secure:
+                    check_request = requests.get(f'https://{self.address}:{self.port}{self.route}', timeout=10)
+                else:
+                    check_request = requests.get(f'http://{self.address}:{self.port}{self.route}', timeout=10)
+            except Exception as e:
+                logging.error(e)
+                failed_tries += 1
+        
+        if failed_tries == self.retries:
             return False
+        else:
+            return True
+                
         
         # print(self.name, check_request.status_code)
         # print(check_request.url)
@@ -93,6 +106,38 @@ def send_msg(current_service: Service,
         logging.info(send_msg)
     pass
 
+def check_availability(services: list):
+    for i in services:
+            if not i.check_state():
+                logging.warning(f'{i.name} is not available!')
+                if i.status == 0:
+                    pass
+                else:
+                    i.change_status()
+            else:
+                if i.status == False:
+                    i.change_status()
+                    i.notified = False
+                    send_msg(i, "is up! ✅")
+                logging.info(f'{i.name} is available') 
+        
+    all = len(services)
+    available = 0
+    unavailable = 0
+
+    for i in services:
+        
+        if i.status == 1:
+            available += 1
+        else:
+            unavailable += 1
+
+        if i.status == 0 and i.notified == False:
+            send_msg(i, "is DOWN! ❌")
+            i.notified = True
+
+    logging.info(f'Total hosts: {all}. Available : {available}. Unavailable: {unavailable}.')
+
 if __name__ == "__main__":
 
     logging.warning("Application started!")
@@ -116,35 +161,6 @@ if __name__ == "__main__":
         services.append(curr_service)
 
     while(True):
-        for i in services:
-            if not i.check_state():
-                logging.warning(f'{i.name} is not available!')
-                if i.status == 0:
-                    pass
-                else:
-                    i.change_status()
-            else:
-                if i.status == False:
-                    i.change_status()
-                    i.notified = False
-                    send_msg(i, "is up! ✅")
-                logging.info(f'{i.name} is available') 
         
-        all = len(services)
-        available = 0
-        unavailable = 0
-
-        for i in services:
-            
-            if i.status == 1:
-                available += 1
-            else:
-                unavailable += 1
-
-            if i.status == 0 and i.notified == False:
-                send_msg(i, "is DOWN! ❌")
-                i.notified = True
-
-        logging.info(f'Total hosts: {all}. Available : {available}. Unavailable: {unavailable}.')
 
         sleep(120)
