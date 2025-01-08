@@ -54,12 +54,7 @@ class Service:
         
         if failed_tries == self.retries:
             return False
-        else:
-            return True
-                
-        
-        # print(self.name, check_request.status_code)
-        # print(check_request.url)
+
         if check_request.status_code < 400:
             return True
         else:
@@ -161,6 +156,5 @@ if __name__ == "__main__":
         services.append(curr_service)
 
     while(True):
-        
-
+        check_availability(services)
         sleep(120)
